@@ -1,5 +1,10 @@
 {
 	"files.associations": {
-		"stdlib.h": "c"
+		"stdlib.h": "c",
+		"ice_log.h": "c",
+		"stdio.h": "c",
+		"assert.h": "c",
+		"varargs.h": "c",
+		"stdarg.h": "c"
 	}
 }
