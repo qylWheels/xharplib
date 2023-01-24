@@ -12,6 +12,7 @@
 
 #include "ice.h"
 #include <stddef.h>
+#include <stdio.h>
 
 struct _ice_mempool;
 typedef struct _ice_mempool ice_mempool;
@@ -27,6 +28,12 @@ extern void *ice_mempool_alloc(ice_mempool *mp, size_t bytes);
 extern void *ice_mempool_calloc(ice_mempool *mp, size_t bytes);
 
 extern ice_mempool *ice_mempool_clear(ice_mempool *mp);
+
+#ifdef ICE_DEBUG
+
+void ice_mempool_printinfo(FILE *stream, ice_mempool *mp);
+
+#endif  /* ICE_DEBUG */
 
 __ICE_END_DECLS
 
