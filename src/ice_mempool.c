@@ -38,7 +38,8 @@ struct _ice_mempool {
 ice_mempool *ice_mempool_new(void)
 {
 	ice_mempool *newpool = malloc(sizeof *newpool);
-	assert(NULL != newpool);
+	if (NULL == newpool)
+		return NULL;
 	newpool->_first = NULL;
 	return newpool;
 }
@@ -69,7 +70,8 @@ void *ice_mempool_alloc(ice_mempool *mp, size_t bytes)
 
 	if (0 == found) {
 		n = malloc(sizeof *n + blksz * blkcnt * 2);
-		assert(NULL != n);
+		if (NULL == n)
+			return NULL;
 		n->_link = mp->_first;
 		mp->_first = n;
 		n->_base = (union _ice_mempool_align_block *)(n + 1);
@@ -85,6 +87,8 @@ void *ice_mempool_calloc(ice_mempool *mp, size_t bytes)
 	assert(0 != bytes);
 
 	void *mem = ice_mempool_alloc(mp, bytes);
+	if (NULL == mem)
+		return NULL;
 	memset(mem, 0, bytes);
 	return mem;
 }
