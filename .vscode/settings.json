@@ -5,6 +5,7 @@
 		"stdio.h": "c",
 		"assert.h": "c",
 		"varargs.h": "c",
-		"stdarg.h": "c"
+		"stdarg.h": "c",
+		"ice_list.h": "c"
 	}
 }

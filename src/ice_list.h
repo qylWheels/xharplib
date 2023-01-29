@@ -46,17 +46,17 @@ extern ice_list_node *ice_list_find(ice_list *l, void *target,
 
 extern void *ice_list_erase(ice_list_node *n);
 
-extern ice_list *ice_list_push_front(ice_list *l, void *data);
+extern ice_list *ice_list_pushfront(ice_list *l, void *data);
 
 extern void *ice_list_front(ice_list *l);
 
-extern void *ice_list_pop_front(ice_list *l);
+extern void *ice_list_popfront(ice_list *l);
 
-extern ice_list *ice_list_push_back(ice_list *l, void *data);
+extern ice_list *ice_list_pushback(ice_list *l, void *data);
 
 extern void *ice_list_back(ice_list *l);
 
-extern void *ice_list_pop_back(ice_list *l);
+extern void *ice_list_popback(ice_list *l);
 
 extern size_t ice_list_length(ice_list *l);
 
