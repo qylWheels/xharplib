@@ -150,7 +150,7 @@ void *ice_list_erase(ice_list_node *n)
 	--n->_container->_length;
 
 	if (n == n->_container->_first)
-		if (n->_container->_length > 1)
+		if (0 < n->_container->_length)
 			n->_container->_first = n->_next;
 		else
 			n->_container->_first = NULL;
