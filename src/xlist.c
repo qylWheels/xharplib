@@ -1,67 +1,67 @@
 /**
- * @file ice_list.c
+ * @file xlist.c
  * @author qylWheels (command1748165360@126.com)
- * @brief Implementation of ice_list.
+ * @brief Implementation of xlist.
  * @version 0.1.0
  * @date 2023-01-26
  * 
  */
 
-#include "ice_list.h"
-#include "ice_mempool.h"
+#include "xlist.h"
+#include "xmempool.h"
 #include <assert.h>
 #include <stdarg.h>
 #include <stdlib.h>
 
-struct _ice_list {
-	ice_mempool *_mp;
-	ice_list_node *_first;
+struct _xlist {
+	xmempool *_mp;
+	xlist_node *_first;
 	size_t _length;
 };
 
-ice_list *ice_list_new(void)
+xlist *xlist_new(void)
 {
-	ice_list *l = malloc(sizeof *l);
+	xlist *l = malloc(sizeof *l);
 	if (NULL == l)
 		return NULL;
-	l->_mp = ice_mempool_new();
+	l->_mp = xmempool_new();
 	l->_first = NULL;
 	l->_length = 0;
 	return l;
 }
 
-ice_list *ice_list_from(void *first, ...)
+xlist *xlist_from(void *first, ...)
 {
-	ice_list *l = ice_list_new();
+	xlist *l = xlist_new();
 	if (NULL == first)
 		return l;
-	ice_list_pushback(l, first);
+	xlist_pushback(l, first);
 	
 	va_list ap;
 	va_start(ap, first);
 	void *item = NULL;
 	while (NULL != (item = va_arg(ap, void *)))
-		ice_list_pushback(l, item);
+		xlist_pushback(l, item);
 	va_end(ap);
 
 	return l;
 }
 
-void ice_list_delete(ice_list *l)
+void xlist_delete(xlist *l)
 {
 	assert(NULL != l);
-	ice_mempool_delete(l->_mp);
+	xmempool_delete(l->_mp);
 	free(l);
 }
 
-ice_list_node *ice_list_foreach(ice_list *l,
+xlist_node *xlist_foreach(xlist *l,
 		int (*apply)(void *data, void *args), void *args)
 {
 	assert(NULL != l);
 	assert(NULL != apply);
 
 	size_t pos = 0;
-	ice_list_node *n = NULL;
+	xlist_node *n = NULL;
 	int brk = 0;
 	for (n = l->_first; ++pos <= l->_length; n = n->_next) {
 		if (apply(n->data, args) < 0) {
@@ -76,14 +76,14 @@ ice_list_node *ice_list_foreach(ice_list *l,
 		return NULL;
 }
 
-ice_list *ice_list_reverse(ice_list *l)
+xlist *xlist_reverse(xlist *l)
 {
 	assert(NULL != l);
 
 	size_t pos = 0;
-	ice_list_node *n = NULL;
+	xlist_node *n = NULL;
 	for (n = l->_first; ++pos <= l->_length; n = n->_prev) {
-		ice_list_node *tmp = n->_prev;
+		xlist_node *tmp = n->_prev;
 		n->_prev = n->_next;
 		n->_next = tmp;
 	}
@@ -92,13 +92,13 @@ ice_list *ice_list_reverse(ice_list *l)
 	return l;
 }
 
-void **ice_list_toarray(ice_list *l, void *end)
+void **xlist_toarray(xlist *l, void *end)
 {
 	assert(NULL != l);
 
 	void **arr = malloc(sizeof(void *) * (l->_length + 1));
 	size_t pos = 0;
-	ice_list_node *n = NULL;
+	xlist_node *n = NULL;
 	for (n = l->_first; ++pos <= l->_length; n = n->_next) {
 		arr[pos - 1] = n->data;
 	}
@@ -107,18 +107,18 @@ void **ice_list_toarray(ice_list *l, void *end)
 	return arr;
 }
 
-ice_list *ice_list_clear(ice_list *l)
+xlist *xlist_clear(xlist *l)
 {
 	assert(NULL != l);
 
-	ice_mempool_clear(l->_mp);
+	xmempool_clear(l->_mp);
 	l->_first = NULL;
 	l->_length = 0;
 
 	return l;
 }
 
-ice_list_node *ice_list_find(ice_list *l, void *target,
+xlist_node *xlist_find(xlist *l, void *target,
 		int (*equal)(const void *a, const void *b))
 {
 	assert(NULL != l);
@@ -126,7 +126,7 @@ ice_list_node *ice_list_find(ice_list *l, void *target,
 	assert(NULL != equal);
 
 	size_t pos = 0;
-	ice_list_node *n = NULL;
+	xlist_node *n = NULL;
 	int found = 0;
 	for (n = l->_first; ++pos <= l->_length; n = n->_next) {
 		if (1 == equal(n->data, target)) {
@@ -141,7 +141,7 @@ ice_list_node *ice_list_find(ice_list *l, void *target,
 		return NULL;
 }
 
-void *ice_list_erase(ice_list_node *n)
+void *xlist_erase(xlist_node *n)
 {
 	assert(NULL != n);
 
@@ -158,12 +158,12 @@ void *ice_list_erase(ice_list_node *n)
 	return n->data;
 }
 
-ice_list *ice_list_pushfront(ice_list *l, void *data)
+xlist *xlist_pushfront(xlist *l, void *data)
 {
 	assert(NULL != l);
 	assert(NULL != data);
 
-	ice_list_node *n = ice_mempool_alloc(l->_mp, sizeof *n);
+	xlist_node *n = xmempool_alloc(l->_mp, sizeof *n);
 	n->data = data;
 	n->_container = l;
 	
@@ -182,7 +182,7 @@ ice_list *ice_list_pushfront(ice_list *l, void *data)
 	return l;
 }
 
-void *ice_list_front(ice_list *l)
+void *xlist_front(xlist *l)
 {
 	assert(NULL != l);
 	if (0 == l->_length)
@@ -191,7 +191,7 @@ void *ice_list_front(ice_list *l)
 		return l->_first->data;
 }
 
-void *ice_list_popfront(ice_list *l)
+void *xlist_popfront(xlist *l)
 {
 	assert(NULL != l);
 
@@ -211,12 +211,12 @@ void *ice_list_popfront(ice_list *l)
 	return ret;
 }
 
-ice_list *ice_list_pushback(ice_list *l, void *data)
+xlist *xlist_pushback(xlist *l, void *data)
 {
 	assert(NULL != l);
 	assert(NULL != data);
 
-	ice_list_node *n = ice_mempool_alloc(l->_mp, sizeof *n);
+	xlist_node *n = xmempool_alloc(l->_mp, sizeof *n);
 	n->data = data;
 	n->_container = l;
 
@@ -235,7 +235,7 @@ ice_list *ice_list_pushback(ice_list *l, void *data)
 	return l;
 }
 
-void *ice_list_back(ice_list *l)
+void *xlist_back(xlist *l)
 {
 	assert(NULL != l);
 	if (0 == l->_length)
@@ -244,7 +244,7 @@ void *ice_list_back(ice_list *l)
 		return l->_first->_prev->data;
 }
 
-void *ice_list_popback(ice_list *l)
+void *xlist_popback(xlist *l)
 {
 	assert(NULL != l);
 
@@ -263,13 +263,13 @@ void *ice_list_popback(ice_list *l)
 	return ret;
 }
 
-size_t ice_list_length(ice_list *l)
+size_t xlist_length(xlist *l)
 {
 	assert(NULL != l);
 	return l->_length;
 }
 
-int ice_list_empty(ice_list *l)
+int xlist_empty(xlist *l)
 {
 	assert(NULL != l);
 	return 0 == l->_length;

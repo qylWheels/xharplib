@@ -1,19 +1,19 @@
 /**
- * @file ice_log.c
+ * @file xlog.c
  * @author qylWheels (command1748165360@126.com)
- * @brief Implementation of ice_log.
+ * @brief Implementation of xlog.
  * @version 0.1.0
  * @date 2023-01-24
  * 
  */
 
-#include "ice_log.h"
+#include "xlog.h"
 #include <assert.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <time.h>
 
-void ice_log_setenv(ice_log_env *env, const char *path)
+void xlog_setenv(xlog_env *env, const char *path)
 {
 	assert(NULL != env);
 	assert(NULL != path);
@@ -21,7 +21,7 @@ void ice_log_setenv(ice_log_env *env, const char *path)
 	env->_path = path;
 }
 
-int (ice_log_log)(ice_log_env *env, const char *fmt,
+int (xlog_log)(xlog_env *env, const char *fmt,
 		const char *func, const char *file, int line, ...)
 {
 	assert(NULL != env);

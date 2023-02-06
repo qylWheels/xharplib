@@ -1,19 +1,19 @@
 /**
- * @file ice_mempool.c
+ * @file xmempool.c
  * @author qylWheels (command1748165360@126.com)
- * @brief Implementation of ice_mempool.
+ * @brief Implementation of xmempool.
  * @version 0.1.0
  * @date 2023-01-21
  * 
  */
 
-#include "ice_mempool.h"
+#include "xmempool.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-union _ice_mempool_align_block {
+union _xmempool_align_block {
 	char _c;
 	short _s;
 	int _i;
@@ -25,41 +25,41 @@ union _ice_mempool_align_block {
 	void (*_pf)(void);
 };
 
-struct _ice_mempool_node {
-	struct _ice_mempool_node *_link;
-	union _ice_mempool_align_block *_base;
-	union _ice_mempool_align_block *_limit;	
+struct _xmempool_node {
+	struct _xmempool_node *_link;
+	union _xmempool_align_block *_base;
+	union _xmempool_align_block *_limit;	
 };
 
-struct _ice_mempool {
-	struct _ice_mempool_node *_first;
+struct _xmempool {
+	struct _xmempool_node *_first;
 };
 
-ice_mempool *ice_mempool_new(void)
+xmempool *xmempool_new(void)
 {
-	ice_mempool *newpool = malloc(sizeof *newpool);
+	xmempool *newpool = malloc(sizeof *newpool);
 	if (NULL == newpool)
 		return NULL;
 	newpool->_first = NULL;
 	return newpool;
 }
 
-void ice_mempool_delete(ice_mempool *mp)
+void xmempool_delete(xmempool *mp)
 {
 	assert(NULL != mp);
-	ice_mempool_clear(mp);
+	xmempool_clear(mp);
 	free(mp);
 }
 
-void *ice_mempool_alloc(ice_mempool *mp, size_t bytes)
+void *xmempool_alloc(xmempool *mp, size_t bytes)
 {
 	assert(NULL != mp);
 	assert(0 != bytes);
 
-	size_t blksz = sizeof(union _ice_mempool_align_block);
+	size_t blksz = sizeof(union _xmempool_align_block);
 	size_t blkcnt = (bytes - 1) / blksz + 1;
 	int found = 0;
-	struct _ice_mempool_node *n = NULL;
+	struct _xmempool_node *n = NULL;
 	for (n = mp->_first; NULL != n; n = n->_link) {
 		size_t left_blkcnt = n->_limit - n->_base;
 		if (left_blkcnt >= blkcnt) {
@@ -74,31 +74,31 @@ void *ice_mempool_alloc(ice_mempool *mp, size_t bytes)
 			return NULL;
 		n->_link = mp->_first;
 		mp->_first = n;
-		n->_base = (union _ice_mempool_align_block *)(n + 1);
+		n->_base = (union _xmempool_align_block *)(n + 1);
 		n->_limit = n->_base + blkcnt * 2;
 	}
 	n->_base += blkcnt;
 	return n->_base - blkcnt;
 }
 
-void *ice_mempool_calloc(ice_mempool *mp, size_t bytes)
+void *xmempool_calloc(xmempool *mp, size_t bytes)
 {
 	assert(NULL != mp);
 	assert(0 != bytes);
 
-	void *mem = ice_mempool_alloc(mp, bytes);
+	void *mem = xmempool_alloc(mp, bytes);
 	if (NULL == mem)
 		return NULL;
 	memset(mem, 0, bytes);
 	return mem;
 }
 
-ice_mempool *ice_mempool_clear(ice_mempool *mp)
+xmempool *xmempool_clear(xmempool *mp)
 {
 	assert(NULL != mp);
 
-	struct _ice_mempool_node *curr = mp->_first;
-	struct _ice_mempool_node *next = NULL;
+	struct _xmempool_node *curr = mp->_first;
+	struct _xmempool_node *next = NULL;
 	if (NULL == curr)
 		return mp;
 
@@ -112,15 +112,15 @@ ice_mempool *ice_mempool_clear(ice_mempool *mp)
 	return mp;
 }
 
-void ice_mempool_printinfo(FILE *stream, ice_mempool *mp)
+void xmempool_printinfo(FILE *stream, xmempool *mp)
 {
 	assert(NULL != mp);
 
-	fprintf(stream, "== ice_mempool debug info ==\n");
+	fprintf(stream, "== xmempool debug info ==\n");
 	fprintf(stream, "mempool address: %p\n", mp);
 	fprintf(stream, "first node address: %p\n\n", mp->_first);
 
-	struct _ice_mempool_node *n = NULL;
+	struct _xmempool_node *n = NULL;
 	size_t num = 1;
 	for (n = mp->_first; NULL != n; n = n->_link) {
 		fprintf(stream, "node %ld info:\n", num);
